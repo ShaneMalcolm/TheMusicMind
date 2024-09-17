@@ -55,3 +55,28 @@ export const approveComment = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+/* DELETE */
+export const deleteComment = async (req, res) => {
+  try {
+    const { commentId, postId } = req.params;
+
+    // Find the comment by its ID and delete it
+    const deletedComment = await Comment.findByIdAndDelete(commentId);
+
+    if (!deletedComment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Remove the comment from the associated post's comments array
+    await Post.findByIdAndUpdate(
+      postId,
+      { $pull: { comments: commentId } }, // Remove the comment ID from the comments array
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

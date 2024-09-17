@@ -3,8 +3,8 @@ import {
   createComment,
   getNegativeComments,
   approveComment,
+  deleteComment,
 } from "../controllers/comments.js";
-import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -16,5 +16,8 @@ router.get("/negative", getNegativeComments);
 
 /* UPDATE - Admin route to approve a comment */
 router.patch("/:id/approve", approveComment);
+
+/* DELETE - Admin route to delete a comment */
+router.delete("/:postId/:commentId/delete", deleteComment);
 
 export default router;

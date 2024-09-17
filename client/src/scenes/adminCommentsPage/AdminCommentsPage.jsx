@@ -38,6 +38,23 @@ const AdminCommentsPage = () => {
       );
     }
   };
+  const deleteComment = async (commentId, postId) => {
+    const response = await fetch(
+      `http://localhost:3001/comments/${postId}/${commentId}/delete`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      setNegativeComments((prevComments) =>
+        prevComments.filter((comment) => comment._id !== commentId)
+      );
+    }
+  };
 
   useEffect(() => {
     getNegativeComments();
@@ -68,10 +85,10 @@ const AdminCommentsPage = () => {
             {negativeComments.map((comment) => (
               <WidgetWrapper key={comment._id} mb="2rem">
                 <Typography variant="h6" color={palette.neutral.dark}>
-                  Post ID: {comment.postId}
+                  {comment.content}
                 </Typography>
                 <Typography sx={{ color: palette.neutral.main, mb: "1rem" }}>
-                  {comment.content}
+                  Post ID: {comment.postId}
                 </Typography>
                 <Button
                   variant="contained"
@@ -80,6 +97,15 @@ const AdminCommentsPage = () => {
                   onClick={() => approveComment(comment._id)}
                 >
                   Approve
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  onClick={() => deleteComment(comment._id, comment.postId)}
+                  sx={{ ml: "1rem" }}
+                >
+                  REJECT
                 </Button>
               </WidgetWrapper>
             ))}
