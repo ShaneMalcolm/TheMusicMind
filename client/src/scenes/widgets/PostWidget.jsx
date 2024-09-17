@@ -61,19 +61,17 @@ const PostWidget = ({
   const addComment = async () => {
     if (newComment.trim() === "") return;
 
-    // const sentimentResponse = await fetch(
-    //   `http://localhost:3001/api/sentiment-analysis`, // Replace with your actual sentiment analysis endpoint
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ content: newComment }),
-    //   }
-    // );
-    // const sentimentData = await sentimentResponse.json();
-    const sentimentData = { isNegative: false };
+    const sentimentResponse = await fetch(`http://localhost:5000/moderate`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ comment: newComment }),
+    });
+    const res = await sentimentResponse.json();
+
+    const sentimentData = { isNegative: res && res.prediction !== "positive" };
 
     const commentResponse = await fetch(`http://localhost:3001/comments`, {
       method: "POST",

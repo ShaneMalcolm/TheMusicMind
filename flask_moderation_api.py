@@ -1,5 +1,6 @@
-#flask_moderation_api.py
+# flask_moderation_api.py
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pickle
 import pandas as pd
 import numpy as np
@@ -8,10 +9,17 @@ import string
 from nltk.stem import PorterStemmer
 
 app = Flask(__name__)
+CORS(app)
 
-# Load the model and vocabulary
-with open('model/sentiment_lr_model.pickle', 'rb') as f:
-    model = pickle.load(f)
+try:
+    with open('model/sentiment_lr_model.pickle', 'rb') as f:
+        model = pickle.load(f)
+except FileNotFoundError:
+    print("Model file not found. Please check the file path.")
+    exit(1)
+except Exception as e:
+    print(f"Error loading the model: {e}")
+    exit(1)
 
 vocab = pd.read_csv('model/vocab.txt', header=None)
 tokens = vocab[0].tolist()
@@ -32,7 +40,7 @@ def preprocessing(text):
     text = text.lower()
     text = re.sub(r'^https?:\/\/.*[\r\n]*', '', text, flags=re.MULTILINE)
     text = remove_punctuations(text)
-    text = re.sub('\d+', '', text)
+    text = re.sub(r'\d+', '', text)
     text = " ".join([stemmer.stem(word) for word in text.split() if word not in english_stopwords])
     return text
 
