@@ -33,6 +33,9 @@ export const getNegativeComments = async (req, res) => {
     const comments = await Comment.find({
       isNegative: true,
       isApproved: false,
+    }).populate({
+      path: "postId",
+      populate: { path: "comments" },
     });
     res.status(200).json(comments);
   } catch (err) {
