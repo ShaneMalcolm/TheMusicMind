@@ -1,9 +1,10 @@
 // client/src/scenes/adminCommentsPage/index.jsx
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Navbar from "scenes/navbar";
 import WidgetWrapper from "components/WidgetWrapper";
+import ViewPostModal from "./ViewPostModal";
 
 const AdminCommentsPage = () => {
   const { palette } = useTheme();
@@ -88,37 +89,39 @@ const AdminCommentsPage = () => {
                   {comment.content}
                 </Typography>
                 <Typography sx={{ color: palette.neutral.main, mb: "1rem" }}>
-                  Post ID: {comment.postId}
+                  Post ID: {comment.postId._id}
                 </Typography>
-                <Typography sx={{ color: palette.neutral.main, mb: "1rem" }}>
-                  Description: {comment.description}
-      </Typography>
-      {comment.picturePath && (
-        <img
-          width="100%"
-          height="auto"
-          alt="post"
-          style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`http://localhost:3001/assets/${comment.picturePath}`}
-        />
-      )}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => approveComment(comment._id)}
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
-                  Approve
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  onClick={() => deleteComment(comment._id, comment.postId)}
-                  sx={{ ml: "1rem" }}
-                >
-                  REJECT
-                </Button>
+                  <ViewPostModal post={comment.postId} />
+                  <Stack direction={"row"} spacing={2}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={() => approveComment(comment._id)}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      onClick={() =>
+                        deleteComment(comment._id, comment.postId._id)
+                      }
+                      sx={{ mx: "1rem" }}
+                    >
+                      REJECT
+                    </Button>
+                  </Stack>
+                </Stack>
               </WidgetWrapper>
             ))}
           </Box>
