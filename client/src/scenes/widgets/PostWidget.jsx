@@ -13,6 +13,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import ErrorToast from "components/ErrorToast";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
@@ -38,6 +39,7 @@ const PostWidget = ({
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
+  const [openToast, setOpenToast] = useState(false);
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -73,6 +75,10 @@ const PostWidget = ({
 
     const sentimentData = { isNegative: res && res.prediction !== "positive" };
 
+    if (sentimentData.isNegative) {
+      setOpenToast(true);
+    }
+
     const commentResponse = await fetch(`http://localhost:3001/comments`, {
       method: "POST",
       headers: {
@@ -95,6 +101,7 @@ const PostWidget = ({
 
   return (
     <WidgetWrapper m="2rem 0">
+      <ErrorToast open={openToast} setOpen={setOpenToast} />
       <Friend
         friendId={postUserId}
         name={name}
